@@ -1,0 +1,324 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>NodeJS</title>
+
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.7.0/css/reveal.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.7.0/css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.7.0/lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+                <section>
+                    <section>
+                        <h1>NODE JS</h1>
+                        <a href="http://nodejs.org">http://nodejs.org</a>
+                    </section>
+                    <section>
+                        <h2>Lenguaje de programación</h2>
+                        <p>Basado en la sintaxis de Javascript</p>
+                        <p>Event Loop</p>
+                        <p>Event Driven Programing</p>
+						<p>Lenguaje de alto nivel</p>
+                    </section>
+                    <section>
+                        <h2>Instalación</h2>
+                        <p>Es posible instalar Node via apt-get, pero recomendamos usar en vez nvm</p>
+                        <div data-markdown>
+                            <script type="text/template">
+                                1. instalar nvm (node version manager)
+
+                                ```
+                                > curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+                                ```
+                                    
+                                2. Cerrar la terminal y volverla a abrir
+                                    
+                                3. instalar node usando nvm
+
+                                ```
+                                > nvm install node
+                                ```
+                            </script>
+                        </div>
+                    </section>
+                    <section data-markdown>
+                        <h3>Comandos node</h3>
+                        <script type="text/template">
+                            Para abrir la terminal de NodeJS
+
+                            ```
+                            > node
+                            ```
+
+                            Para correr un archivo .js 
+
+                            ``` 
+                            > node archivo.js
+                            ```
+
+                            Para saber la versión de node 
+
+                            ```
+                            > node --version
+							```
+						</script>
+					</section>
+					<section>
+						<h3>NPM</h3>
+						<p>Manejador de Packetes de NODE</p>
+                        <p>Ayuda a poder replicar un ambiente fácilmente</p>
+                        <ul>
+                            <li>Ambiente de desarrollo</li>
+                            <li>Ambiente de producción</li>
+                            <li>Pruebas (Test Driven Dev)</li>
+                        </ul>
+                        <p>La información de replicación se guarda en el archivo de configuración <b>package.json</b></p>
+					</section>
+                    <section>
+						<h3>Comandos NPM</h3>
+                        <div data-markdown>
+                                <script type="text/template">
+                                    Para saber la versión de npm 
+        
+                                    ```
+                                    > npm --version
+                                    ```
+                                    
+                                    Primer comando para iniciar un proyecto en NodeJs. 
+                                    Crear un archivo de configuración package.json
+        
+                                    ```
+                                    > npm init
+                                    ```
+        
+                                    Instalar un packete de NodeJS 
+        
+                                    ``` 
+                                    > npm (install / i) (--save / -s) <package-name>@v#.#.#
+                                    ```
+                                    
+                                </script>
+                            </div>
+					</section>
+                </section>
+                <section>                    
+                    <section>
+                        <h3>Callbacks</h3>
+                        <p>Es una función que se llama al terminar una instrucción</p>
+                        <p>Ej código bloqueador:</p>
+                        <pre><code class="hljs" data-trim>
+var fs = require("fs")
+
+var data = fs.readFileSync('input.txt')
+
+console.log(data.toString())
+console.log("Program Ended")
+                        </code></pre>
+                    </section>
+                    <section>
+                        <p>continuación...</p>
+                        <p>Ej código NO bloqueador:</p>
+                        <pre><code class="hljs">
+var fs = require("fs");
+
+fs.readFile('input.txt', function (err, data) {
+    if (err) return console.error(err);
+    console.log(data.toString());
+});
+
+console.log("Program Ended")
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h3>Eventos</h3>
+                        <p>En una aplicación impulsada por eventos, generalmente hay un bucle principal que escucha eventos y luego activa una función de devolución de llamada cuando se detecta uno de esos eventos.</p>
+                    </section>
+                    <section>
+                            <img src="https://modern-js.github.io/images/event-loop.jpg" alt="">
+                    </section>
+                    <section>
+                        <p>El nodo usa un patrón de observador. El hilo del nodo mantiene un bucle de evento y cada vez que se completa una tarea, dispara el evento correspondiente que señala la ejecución de la función del detector de eventos</p>
+                        <pre><code class="hljs">
+// Import events module
+var events = require('events');
+
+// Create an eventEmitter object
+var eventEmitter = new events.EventEmitter();
+
+// Create an event handler as follows
+var connectHandler = function connected() {
+    console.log('connection succesful.');
+
+    // Fire the data_received event 
+    eventEmitter.emit('data_received');
+}
+                                </code></pre>
+                    </section>
+                    <section>
+                        <p>...continuación</p>
+                        <pre><code class="hljs">                            
+// Bind the connection event with the handler
+eventEmitter.on('connection', connectHandler);
+
+// Bind the data_received event with the anonymous function
+eventEmitter.on('data_received', function(){
+    console.log('data received succesfully.');
+});
+
+// Fire the connection event 
+eventEmitter.emit('connection');
+
+console.log("Program Ended.");
+                        </code></pre>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <h1>require y module.exports</h1>
+                    </section>
+                    <section>
+                        <p>Se ocupan estas funciones para compartir acceso a ciertas partes de un programa</p>
+                        <div data-markdown>
+                            <script type="text/template">
+                                Para importar
+
+                                ```js
+                                let libName = require('./ruta/a/lib.js') // para importar
+
+
+                                ```
+                                
+                                Para exportar
+                                ```js
+                                module.export = { <funciones o variables a exportar>} // para exportar
+                                ```
+                            </script>
+                        </div>
+                    </section>
+                    <section>
+                        <p>En ES6</p>
+                        <div data-markdown>
+                            <script type="text/template">
+                                Para importar
+
+                                ```js
+                                import * as todaLaLibreria from './ruta/a/lib.js' 
+                                // para importar con Babel
+                                // .mjs con modulos experimentales
+
+                                ```
+                                
+                                Para exportar
+                                ```js
+                                export { <funciones o variables a exportar>} // para exportar
+                                ```
+                            </script>
+                        </div>
+                    </section>
+                </section>
+                <section>
+                    <section><h1>HTTP Server</h1></section>
+                    <section>
+                        <div data-markdown>
+                            <script type="text/template">
+                            ```js
+                            var http = require("http")
+                                
+                            http.createServer(function (request, response) {
+                                // Send the HTTP header 
+                                // HTTP Status: 200 : OK
+                                // Content Type: text/plain
+                                response.writeHead(200, {'Content-Type': 'text/plain'});
+                                
+                                // Send the response body as "Hello World"
+                                response.end('Hello World\n');
+                             }).listen(8081);
+                             
+                             // Console will print the message
+                             console.log('Server running at http://127.0.0.1:8081/');
+                            ```
+                            </script>
+                        </div>
+                    </section>
+                    <section>
+                        <div data-markdown>
+                            <script type="text/template">
+                            ```js
+                            var http = require('http');
+                            var fs = require('fs');
+                            var url = require('url');
+
+                            // Create a server
+                            http.createServer( function (request, response) {  
+                            // Parse the request containing file name
+                            var pathname = url.parse(request.url).pathname;
+                            
+                            // Print the name of the file for which request is made.
+                            console.log("Request for " + pathname + " received.");
+                            
+                            // Read the requested file content from file system
+                            fs.readFile(pathname.substr(1), function (err, data) {
+                                if (err) {
+                                    console.log(err);
+                                    // HTTP Status: 404 : NOT FOUND
+                                    // Content Type: text/plain
+                                    response.writeHead(404, {'Content-Type': 'text/html'});
+                                }else {	
+                                    //Page found	  
+                                    // HTTP Status: 200 : OK
+                                    // Content Type: text/plain
+                                    response.writeHead(200, {'Content-Type': 'text/html'});	
+                                    
+                                    // Write the content of the file to response body
+                                    response.write(data.toString());		
+                                }
+                                // Send the response body 
+                                response.end();
+                            });   
+                            }).listen(8081);
+
+                            // Console will print the message
+                            console.log('Server running at http://127.0.0.1:8081/');
+                            ```
+                            </script>
+                        </div>
+                    </section>
+                </section>
+			</div>
+		</div>
+
+		<script src="https://cdn.jsdelivr.net/npm/reveal.js@3.7.0/lib/js/head.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/reveal.js@3.7.0/js/reveal.min.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				transition: 'zoom',
+				dependencies: [
+					{ src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.7.0/plugin/markdown/marked.js' },
+					{ src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.7.0/plugin/markdown/markdown.js' },
+					{ src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.7.0/plugin/notes/notes.js', async: true },
+					{ src: 'https://cdn.jsdelivr.net/npm/reveal.js@3.7.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
